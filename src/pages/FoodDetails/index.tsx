@@ -114,6 +114,10 @@ const FoodDetails: React.FC = () => {
     const extraTotal = extras.reduce((accumulator, extra) => {
       return accumulator + extra.quantity + extra.value; 
     }, 0)
+
+    const total  = food.price;
+
+    return formatValue((extraTotal + total) * foodQuantity)
   }, [extras, food, foodQuantity]);
 
   async function handleFinishOrder(): Promise<void> {
