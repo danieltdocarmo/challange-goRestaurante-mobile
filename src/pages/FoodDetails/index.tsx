@@ -38,6 +38,7 @@ import {
   ButtonText,
   IconContainer,
 } from './styles';
+import { Extrapolate } from 'react-native-reanimated';
 
 interface Params {
   id: number;
@@ -73,7 +74,17 @@ const FoodDetails: React.FC = () => {
 
   useEffect(() => {
     async function loadFood(): Promise<void> {
-      // Load a specific food with extras based on routeParams id
+      const { data } = await api.get(`/foods/${routeParams.id}`);
+      
+      setFood({
+        ...data,
+        formattedPrice: formatValue(data.price)
+      });
+    
+      setExtras(data.extras.map((extra: Omit<Extra, 'quantity'>) => ({
+        ...extra,
+        quantity: 0
+      })))
     }
 
     loadFood();
@@ -100,7 +111,9 @@ const FoodDetails: React.FC = () => {
   }, [isFavorite, food]);
 
   const cartTotal = useMemo(() => {
-    // Calculate cartTotal
+    const extraTotal = extras.reduce((accumulator, extra) => {
+      return accumulator + extra.quantity + extra.value; 
+    }, 0)
   }, [extras, food, foodQuantity]);
 
   async function handleFinishOrder(): Promise<void> {
